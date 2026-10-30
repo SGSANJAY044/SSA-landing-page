@@ -1,0 +1,140 @@
+---
+import Base from '../layouts/Base.astro';
+import Illustration from './Illustration.astro';
+import QuickFacts from './service/QuickFacts.astro';
+import Stepper from './Stepper.astro';
+import Checklist from './service/Checklist.astro';
+import Faq from './service/Faq.astro';
+import MoreServices from './service/MoreServices.astro';
+import { serviceText } from '../data/services.js';
+import { site } from '../data/site.js';
+import { t, localePath } from '../i18n/ui.js';
+
+const { service, locale } = Astro.props;
+const copy = serviceText(service, locale);
+const description = `${copy.short} ${copy.lead}`.slice(0, 158);
+---
+
+<Base
+  locale={locale}
+  title={`${copy.title} — ${site.city[locale]}`}
+  description={description}
+  backHref={localePath(locale, '/#services')}
+  waMessage={`${t(locale, "service.waIntro")} ${copy.title}.`}
+  page="service"
+  service={service.slug}
+>
+  <article class="svc">
+    <header class="svc__hero">
+      <div class="wrap svc__hero-inner">
+        <div class="svc__art" style={`view-transition-name: art-${service.slug}`}>
+          <Illustration name={service.slug} />
+        </div>
+        <div class="svc__intro">
+          <p class="eyebrow">{t(locale, `groups.${service.group}`)}</p>
+          <h1 class="svc__title" style={`view-transition-name: title-${service.slug}`}>{copy.title}</h1>
+          <p class="svc__lead" data-reveal>{copy.lead}</p>
+          <div data-reveal>
+            <QuickFacts service={service} locale={locale} />
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="svc__section" aria-labelledby="steps-title">
+      <div class="wrap">
+        <h2 class="svc__h2" id="steps-title" data-reveal>{t(locale, 'service.steps')}</h2>
+        <Stepper steps={copy.steps.map((body) => ({ body }))} />
+      </div>
+    </section>
+
+    <section class="svc__section svc__section--tint" aria-labelledby="docs-title">
+      <div class="wrap svc__narrow">
+        <h2 class="svc__h2" id="docs-title" data-reveal>{t(locale, 'service.docs')}</h2>
+        <Checklist docs={copy.docs} slug={service.slug} title={copy.title} locale={locale} />
+      </div>
+    </section>
+
+    <section class="svc__section" aria-labelledby="faq-title">
+      <div class="wrap svc__narrow">
+        <h2 class="svc__h2" id="faq-title" data-reveal>{t(locale, 'service.faq')}</h2>
+        <Faq faqs={copy.faqs} />
+      </div>
+    </section>
+
+    <MoreServices current={service.slug} locale={locale} />
+  </article>
+</Base>
+
+<script>
+  import '../scripts/service.js';
+</script>
+
+<style>
+  .svc__hero {
+    padding-block: 16px 36px;
+    background: linear-gradient(180deg, var(--il-bg), transparent);
+  }
+
+  .svc__hero-inner {
+    display: grid;
+    gap: 8px;
+  }
+
+  .svc__art {
+    width: min(78%, 340px);
+    margin-inline: auto;
+  }
+
+  .svc__intro {
+    display: grid;
+    gap: 12px;
+  }
+
+  .svc__title {
+    font-size: clamp(2rem, 9vw, 3.4rem);
+    font-weight: 800;
+    width: fit-content;
+  }
+
+  .svc__lead {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    max-width: 52ch;
+  }
+
+  .svc__section {
+    padding-block: 40px;
+  }
+
+  .svc__section--tint {
+    background: color-mix(in srgb, var(--gold-soft) 35%, var(--bg));
+  }
+
+  .svc__narrow {
+    max-width: 760px;
+  }
+
+  .svc__h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 18px;
+  }
+
+  @media (min-width: 900px) {
+    .svc__hero-inner {
+      grid-template-columns: 1fr 1.1fr;
+      align-items: center;
+      gap: 48px;
+    }
+
+    .svc__art {
+      order: 2;
+      width: 100%;
+    }
+
+    .svc__section .wrap:not(.svc__narrow) {
+      max-width: 760px;
+    }
+  }
+</style>

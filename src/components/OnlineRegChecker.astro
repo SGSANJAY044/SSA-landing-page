@@ -1,0 +1,233 @@
+---
+import Icon from './Icon.astro';
+import { deedTypes } from '../data/onlineReg.js';
+import { site } from '../data/site.js';
+import { t, pick, localePath } from '../i18n/ui.js';
+import { waLink } from '../scripts/whatsapp.js';
+
+const { locale } = Astro.props;
+---
+
+<section class="checker section" data-checker aria-labelledby="checker-title">
+  <div class="wrap">
+    <div class="checker__card" data-reveal>
+      <p class="eyebrow checker__eyebrow">{t(locale, 'checker.eyebrow')}</p>
+      <h2 class="section-title" id="checker-title">{t(locale, 'checker.title')}</h2>
+      <p class="checker__lead">{t(locale, 'checker.lead')}</p>
+
+      <div class="checker__options" role="group" aria-label={t(locale, 'checker.prompt')}>
+        {
+          deedTypes.map((d) => (
+            <button type="button" class="checker__option" data-deed={d.id} data-service={d.service} aria-pressed="false" aria-controls="checker-answer">
+              <span class:list={['dot', `dot--${d.status}`]} aria-hidden="true" />
+              {pick(locale, d.label)}
+            </button>
+          ))
+        }
+      </div>
+
+      <div class="checker__answer" id="checker-answer" aria-live="polite">
+        <p class="checker__empty" data-result-empty>
+          {t(locale, 'checker.prompt')} ↑
+        </p>
+        {
+          deedTypes.map((d) => (
+            <div class="checker__result" data-result={d.id} hidden>
+              <p class="checker__label">{pick(locale, d.label)}</p>
+              <p class:list={['status', `status--${d.status}`]}>{t(locale, `checker.status.${d.status}`)}</p>
+              <p class="checker__detail">{pick(locale, d.detail)}</p>
+              <div class="checker__ctas">
+                <a
+                  class="btn btn--wa"
+                  href={waLink(site.whatsapp, `${t(locale, 'service.waIntro')} ${pick(locale, d.label)}`)}
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <Icon name="whatsapp" />
+                  {t(locale, 'checker.cta')}
+                </a>
+                <a class="checker__more" href={localePath(locale, `/services/${d.service}/`)}>
+                  {t(locale, 'services.open')}
+                  <Icon name="arrow" />
+                </a>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+      <p class="checker__note">{t(locale, 'checker.note')}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .checker {
+    padding-top: 0;
+  }
+
+  .checker__card {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    gap: 14px;
+    padding: clamp(22px, 6vw, 48px);
+    border-radius: var(--radius-l);
+    background: #053f29;
+    color: #f4efe3;
+    --text-muted: #b9d3c4;
+  }
+
+  .checker__card::before {
+    content: '';
+    position: absolute;
+    width: 320px;
+    aspect-ratio: 1;
+    right: -120px;
+    top: -140px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgb(201 151 28 / 45%), transparent 70%);
+    pointer-events: none;
+  }
+
+  .checker__card .checker__eyebrow {
+    color: #d6b468;
+  }
+
+  .checker__lead {
+    color: var(--text-muted);
+    max-width: 52ch;
+  }
+
+  .checker__options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .checker__option {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 8px 14px;
+    border: 0;
+    border-radius: 14px;
+    background: rgb(255 255 255 / 8%);
+    color: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    transition:
+      background 0.2s,
+      transform 0.2s var(--ease-out);
+  }
+
+  .checker__option:active {
+    transform: scale(0.97);
+  }
+
+  .checker__option[aria-pressed='true'] {
+    background: #f4efe3;
+    color: #053f29;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    flex: none;
+    border-radius: 50%;
+  }
+
+  .dot--online {
+    background: #7fd3a8;
+  }
+  .dot--partial {
+    background: #d6b468;
+  }
+  .dot--office {
+    background: #e07a5f;
+  }
+
+  .checker__answer {
+    min-height: 168px;
+    padding: 18px;
+    border-radius: var(--radius-m);
+    background: rgb(255 255 255 / 6%);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 10%);
+  }
+
+  .checker__empty {
+    display: grid;
+    place-items: center;
+    min-height: 132px;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .checker__result {
+    display: grid;
+    gap: 8px;
+  }
+
+  /* No JS: show every answer (beats the global [hidden] rule) */
+  :global(html:not(.js)) .checker__result[hidden] {
+    display: grid !important;
+    margin-top: 16px;
+  }
+
+  :global(html:not(.js)) .checker__empty {
+    display: none;
+  }
+
+  .checker__label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .status {
+    font-size: 1.35rem;
+    font-weight: 800;
+  }
+
+  .status--online {
+    color: #7fd3a8;
+  }
+  .status--partial {
+    color: #d6b468;
+  }
+  .status--office {
+    color: #f09a80;
+  }
+
+  .checker__detail {
+    color: var(--text-muted);
+  }
+
+  .checker__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+    margin-top: 6px;
+  }
+
+  .checker__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .checker__more :global(svg) {
+    width: 16px;
+    height: 16px;
+  }
+
+  .checker__note {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+</style>

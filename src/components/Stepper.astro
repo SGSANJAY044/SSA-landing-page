@@ -1,0 +1,119 @@
+---
+/**
+ * Vertical numbered steps with a line that draws on scroll (scripts/stepper.js).
+ * steps: [{ title?, body }]
+ */
+const { steps } = Astro.props;
+---
+
+<div class="stepper-wrap" data-stepper>
+<span class="stepper__track" aria-hidden="true"><span class="stepper__line" data-stepper-line></span></span>
+<ol class="stepper">
+  {
+    steps.map((step, i) => (
+      <li class="step" data-step>
+        <span class="step__num" aria-hidden="true">
+          {i + 1}
+        </span>
+        <div class="step__body" data-step-body>
+          {step.title && <h3 class="step__title">{step.title}</h3>}
+          <p class="step__text">{step.body}</p>
+        </div>
+      </li>
+    ))
+  }
+</ol>
+</div>
+
+<style>
+  .stepper-wrap {
+    position: relative;
+  }
+
+  .stepper {
+    display: grid;
+    gap: 22px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .stepper__track {
+    position: absolute;
+    left: 19px;
+    top: 20px;
+    bottom: 20px;
+    width: 2px;
+    background: var(--line);
+    border-radius: 2px;
+  }
+
+  .stepper__line {
+    position: absolute;
+    inset: 0;
+    background: var(--gold);
+    border-radius: inherit;
+    transform-origin: top;
+  }
+
+  .step {
+    position: relative;
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr); /* minmax: let long words wrap, not overflow */
+    gap: 14px;
+    align-items: start;
+  }
+
+  .step__num {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--surface);
+    box-shadow: inset 0 0 0 2px var(--line);
+    font-weight: 800;
+    transition:
+      background 0.35s var(--ease-out),
+      color 0.35s var(--ease-out),
+      box-shadow 0.35s var(--ease-out),
+      transform 0.35s var(--ease-out);
+  }
+
+  .step.is-done .step__num {
+    background: var(--gold);
+    color: #fff;
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--gold) 22%, transparent);
+    transform: scale(1.05);
+  }
+
+  /* No JS: everything is simply shown as complete */
+  :global(html:not(.js)) .step__num {
+    background: var(--gold);
+    color: #fff;
+  }
+
+  .step__body {
+    padding-top: 7px;
+    display: grid;
+    gap: 4px;
+  }
+
+  .step__title {
+    font-size: 1.1rem;
+    font-weight: 800;
+  }
+
+  .step__text {
+    color: var(--text-muted);
+  }
+
+  .step__title + .step__text {
+    font-size: 0.95rem;
+  }
+
+  .step:not(:has(.step__title)) .step__text {
+    color: var(--text);
+  }
+</style>

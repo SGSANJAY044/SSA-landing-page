@@ -1,0 +1,89 @@
+/* Design tokens, sampled from the client logo (forest green + antique gold on cream).
+   Light palette on :root; dark palette redefines the same names. */
+:root {
+  color-scheme: light;
+
+  --brand: #053f29; /* logo green */
+  --brand-soft: #dcebe2;
+  --ink: #10261c;
+  --ink-soft: #4d5c54;
+  --gold: #b8923f;
+  --gold-soft: #f1e3c3;
+  --gold-deep: #8a6a26;
+  --cream: #faf2e7; /* logo background */
+  --paper: #fffdf9;
+  --teal: #1d6b48;
+  --teal-soft: #d9ede2;
+  --line: #e8dcc6;
+  --whatsapp: #1fa855;
+
+  --bg: var(--cream);
+  --surface: var(--paper);
+  --text: var(--ink);
+  --text-muted: var(--ink-soft);
+
+  /* Illustration fills — read by every SVG in components/illustrations */
+  --il-ink: var(--brand);
+  --il-gold: var(--gold);
+  --il-gold-soft: var(--gold-soft);
+  --il-paper: #ffffff;
+  --il-teal: #2f8a5f;
+  --il-bg: #f4e9d5;
+
+  --font-sans: 'Plus Jakarta Sans', 'Noto Sans Tamil', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-ta: 'Noto Sans Tamil', 'Plus Jakarta Sans', system-ui, sans-serif;
+
+  --radius-s: 10px;
+  --radius-m: 18px;
+  --radius-l: 28px;
+  --shadow-card: 0 1px 2px rgb(5 63 41 / 6%), 0 12px 32px -12px rgb(5 63 41 / 22%);
+  --shadow-pop: 0 18px 50px -18px rgb(5 63 41 / 40%);
+
+  --gutter: clamp(16px, 5vw, 32px);
+  --max: 1120px;
+  --header-h: 60px;
+  --bar-h: 64px;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --brand: #2f8a5f;
+    --brand-soft: #173326;
+    --bg: #0c1813;
+    --surface: #14241c;
+    --text: #f3ecdf;
+    --text-muted: #b5c2b9;
+    --line: #26392f;
+    --gold: #d6b468;
+    --gold-soft: #3a3120;
+    --teal: #5cc495;
+    --teal-soft: #173326;
+    --il-ink: #e9e2d2;
+    --il-paper: #1f3329;
+    --il-bg: #182a21;
+    --il-gold-soft: #4a3f27;
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 30%), 0 12px 32px -12px rgb(0 0 0 / 60%);
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --brand: #2f8a5f;
+  --brand-soft: #173326;
+  --bg: #0c1813;
+  --surface: #14241c;
+  --text: #f3ecdf;
+  --text-muted: #b5c2b9;
+  --line: #26392f;
+  --gold: #d6b468;
+  --gold-soft: #3a3120;
+  --teal: #5cc495;
+  --teal-soft: #173326;
+  --il-ink: #e9e2d2;
+  --il-paper: #1f3329;
+  --il-bg: #182a21;
+  --il-gold-soft: #4a3f27;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 30%), 0 12px 32px -12px rgb(0 0 0 / 60%);
+}

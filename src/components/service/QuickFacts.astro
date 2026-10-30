@@ -1,0 +1,101 @@
+---
+import { t, pick } from '../../i18n/ui.js';
+
+const { service, locale } = Astro.props;
+const ask = t(locale, 'service.facts.ask');
+
+const facts = [
+  { label: t(locale, 'service.facts.time'), value: pick(locale, service.timeline) ?? ask },
+  {
+    label: t(locale, 'service.facts.fee'),
+    value: service.free ? t(locale, 'service.facts.free') : (pick(locale, service.fee) ?? ask),
+    free: service.free,
+  },
+  { label: t(locale, 'service.facts.visit'), value: service.visit ? t(locale, `service.visit.${service.visit}`) : ask },
+];
+---
+
+<dl class="facts">
+  {
+    facts.map((f) => (
+      <div class:list={['fact', { 'fact--free': f.free, 'fact--ask': f.value === ask }]}>
+        <dt>{f.label}</dt>
+        <dd>{f.value}</dd>
+      </div>
+    ))
+  }
+</dl>
+
+<style>
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 0;
+  }
+
+  .fact {
+    padding: 12px;
+    border-radius: var(--radius-m);
+    background: var(--surface);
+    box-shadow: inset 0 0 0 1px var(--line);
+    min-width: 0;
+  }
+
+  .fact dt {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  .fact dd {
+    margin: 2px 0 0;
+    font-weight: 800;
+    font-size: 0.98rem;
+  }
+
+  .fact--free {
+    background: var(--teal-soft);
+    box-shadow: none;
+  }
+
+  .fact--free dd {
+    color: var(--teal);
+  }
+
+  .fact--ask dd {
+    color: var(--gold-deep);
+  }
+
+  /* Tamil values (கேளுங்கள், தேவையில்லை…) don't fit a third of a phone without
+     splitting mid-word, so on phones each fact becomes a full-width row:
+     label on the left, value on the right. */
+  @media (max-width: 639px) {
+    :global(:lang(ta)) .facts {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+
+    :global(:lang(ta)) .fact {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 14px;
+    }
+
+    :global(:lang(ta)) .fact dt {
+      font-size: 0.82rem;
+    }
+
+    :global(:lang(ta)) .fact dd {
+      margin: 0;
+      text-align: right;
+    }
+  }
+
+  .fact dd,
+  .fact dt {
+    overflow-wrap: normal; /* never split a word; rows give Tamil the room instead */
+  }
+</style>

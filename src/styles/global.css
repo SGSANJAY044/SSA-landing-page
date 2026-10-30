@@ -1,0 +1,497 @@
+@import './tokens.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--header-h) + 12px);
+  interpolate-size: allow-keywords;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: calc(var(--bar-h) + env(safe-area-inset-bottom, 0px));
+  overflow-x: clip;
+}
+
+:lang(ta) body,
+body:lang(ta) {
+  font-family: var(--font-ta);
+  line-height: 1.7;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.15;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+:lang(ta) :is(h1, h2, h3) {
+  letter-spacing: 0;
+  line-height: 1.35;
+}
+
+p {
+  margin: 0;
+}
+
+/* Tamil compounds (e.g. பார்த்துக்கொள்கிறோம்) can be wider than a phone column;
+   let them break rather than push the layout past the screen edge. */
+:is(h1, h2, h3, p, li, dd, summary) {
+  overflow-wrap: break-word;
+}
+
+:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.wrap {
+  width: 100%;
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  padding-block: clamp(56px, 12vw, 104px);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+}
+
+/* Tracking breaks Tamil conjuncts apart */
+:lang(ta) .eyebrow {
+  letter-spacing: 0;
+}
+
+:root[data-theme='dark'] .eyebrow {
+  color: var(--gold);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .eyebrow {
+    color: var(--gold);
+  }
+}
+
+.section-title {
+  font-size: clamp(1.7rem, 6.5vw, 2.6rem);
+  font-weight: 800;
+  margin-top: 8px;
+}
+
+/* Tamil words run longer; one step smaller so the longest still fit whole */
+:lang(ta) .section-title {
+  font-size: clamp(1.35rem, 5.4vw, 2.2rem);
+}
+
+.section-lead {
+  margin-top: 10px;
+  color: var(--text-muted);
+  max-width: 34ch;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 22px;
+  border-radius: 999px;
+  border: 0;
+  font-weight: 700;
+  text-decoration: none;
+  text-align: center;
+  text-wrap: balance; /* long (Tamil) labels wrap inside the button instead of widening it */
+  cursor: pointer;
+  transition:
+    transform 0.2s var(--ease-out),
+    box-shadow 0.2s var(--ease-out);
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+
+.btn--wa {
+  background: var(--whatsapp);
+  color: #fff;
+  box-shadow: 0 10px 24px -10px rgb(31 168 85 / 70%);
+}
+
+.btn--ink {
+  background: var(--brand);
+  color: #fff;
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--text);
+  box-shadow: inset 0 0 0 1.5px var(--line);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--line);
+  white-space: nowrap;
+}
+
+.chip--free {
+  background: var(--teal-soft);
+  color: var(--teal);
+  box-shadow: none;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* SplitText word masks clip with overflow; pad them so descenders (y, p, g)
+   and Tamil vowel signs below the baseline are not cut during the reveal. */
+.split-word-mask {
+  padding-bottom: 0.18em;
+  margin-bottom: -0.18em;
+}
+
+/* Illustration palette — classes shared by every SVG scene */
+.il {
+  width: 100%;
+  height: auto;
+}
+.il .bg {
+  fill: var(--il-bg);
+}
+.il .ink {
+  fill: var(--il-ink);
+}
+.il .gold {
+  fill: var(--il-gold);
+}
+.il .gold-soft {
+  fill: var(--il-gold-soft);
+}
+.il .paper {
+  fill: var(--il-paper);
+}
+.il .teal {
+  fill: var(--il-teal);
+}
+.il .stroke {
+  fill: none;
+  stroke: var(--il-ink);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.il .stroke-gold {
+  fill: none;
+  stroke: var(--il-gold);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.il .outline {
+  stroke: var(--il-ink);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+}
+
+/* Illustration idle motion — one or two parts per scene */
+.il [class*='a-'] {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.il .a-float {
+  animation: il-float 3.4s ease-in-out infinite;
+}
+.il .a-pulse {
+  animation: il-pulse 2.4s ease-in-out infinite;
+}
+.il .a-wave {
+  transform-origin: left bottom;
+  animation: il-blink 1.8s ease-in-out infinite;
+}
+.il .a-stamp {
+  animation: il-stamp 3.2s var(--ease-out) infinite;
+}
+.il .a-seal {
+  animation: il-seal 3.2s var(--ease-out) infinite;
+}
+.il .a-scan {
+  animation: il-scan 3.6s ease-in-out infinite;
+}
+.il .a-slide {
+  animation: il-slide 3.6s var(--ease-out) infinite;
+}
+.il .a-dash {
+  animation: il-dash 1.2s linear infinite;
+}
+.il .a-draw {
+  stroke-dashoffset: 120;
+  animation: il-draw 3s ease-in-out infinite;
+}
+.il .a-bounce {
+  animation: il-bounce 2s var(--ease-out) infinite;
+}
+.il .a-tilt {
+  transform-origin: center top;
+  animation: il-tilt 3.6s ease-in-out infinite;
+}
+.il .a-coin {
+  animation: il-coin 2.8s var(--ease-out) infinite;
+}
+.il .a-twinkle {
+  animation: il-twinkle 2.2s ease-in-out infinite;
+}
+.il .a-delay {
+  animation-delay: 0.7s;
+}
+.il .a-delay2 {
+  animation-delay: 1.4s;
+}
+
+@keyframes il-float {
+  50% {
+    transform: translateY(-6px);
+  }
+}
+@keyframes il-pulse {
+  50% {
+    transform: scale(1.12);
+  }
+}
+@keyframes il-blink {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes il-stamp {
+  0%,
+  30% {
+    transform: translate(0, 0);
+  }
+  55% {
+    transform: translate(-39px, 38px);
+  }
+  62%,
+  72% {
+    transform: translate(-39px, 48px);
+  }
+  88%,
+  100% {
+    transform: translate(0, 0);
+  }
+}
+@keyframes il-seal {
+  0%,
+  62% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  70%,
+  92% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+@keyframes il-scan {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  33% {
+    transform: translate(28px, -28px);
+  }
+  66% {
+    transform: translate(20px, 22px);
+  }
+}
+@keyframes il-slide {
+  0%,
+  15% {
+    transform: translate(-30px, -12px);
+    opacity: 0;
+  }
+  40%,
+  85% {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+}
+@keyframes il-dash {
+  to {
+    stroke-dashoffset: -18;
+  }
+}
+@keyframes il-draw {
+  0% {
+    stroke-dashoffset: 120;
+  }
+  50%,
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes il-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  35% {
+    transform: translateY(-12px);
+  }
+  55% {
+    transform: translateY(0);
+  }
+}
+@keyframes il-tilt {
+  0%,
+  100% {
+    transform: rotate(-5deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+}
+@keyframes il-coin {
+  0% {
+    transform: translateY(-14px);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  70% {
+    transform: translateY(26px);
+    opacity: 1;
+  }
+  85%,
+  100% {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+}
+@keyframes il-twinkle {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(0.6);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+/* Cross-document view transitions (card → service page) */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.35s;
+}
+
+::view-transition-group(*) {
+  animation-duration: 0.45s;
+  animation-timing-function: var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  @view-transition {
+    navigation: none;
+  }
+}

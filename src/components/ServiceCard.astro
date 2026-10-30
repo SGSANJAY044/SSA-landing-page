@@ -1,0 +1,122 @@
+---
+import Illustration from './Illustration.astro';
+import Icon from './Icon.astro';
+import { serviceText } from '../data/services.js';
+import { t, localePath } from '../i18n/ui.js';
+
+const { service, locale, compact = false } = Astro.props;
+const copy = serviceText(service, locale);
+---
+
+<a class:list={['card', { 'card--compact': compact }]} href={localePath(locale, `/services/${service.slug}/`)} data-astro-prefetch>
+  <div class="card__art" style={`view-transition-name: art-${service.slug}`}>
+    <Illustration name={service.slug} />
+    {service.free && <span class="chip chip--free card__badge">{t(locale, 'services.free')}</span>}
+  </div>
+  <div class="card__body">
+    <p class="card__group">{t(locale, `groups.${service.group}`)}</p>
+    <h3 class="card__title" style={`view-transition-name: title-${service.slug}`}>{copy.title}</h3>
+    {!compact && <p class="card__short">{copy.short}</p>}
+    {
+      !compact && (
+        <span class="card__go">
+          {t(locale, 'services.open')}
+          <Icon name="arrow" />
+        </span>
+      )
+    }
+  </div>
+</a>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-radius: var(--radius-l);
+    background: var(--surface);
+    box-shadow: var(--shadow-card);
+    text-decoration: none;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .card__art {
+    position: relative;
+    padding: 18px 18px 0;
+    background: linear-gradient(180deg, var(--il-bg), transparent);
+  }
+
+  .card__badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+  }
+
+  .card__body {
+    display: grid;
+    gap: 6px;
+    padding: 6px 20px 20px;
+    flex: 1;
+    align-content: start;
+  }
+
+  .card__group {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  :global(:lang(ta)) .card__group {
+    letter-spacing: 0;
+  }
+
+  .card__title {
+    font-size: 1.3rem;
+    font-weight: 800;
+    width: fit-content;
+  }
+
+  .card__short {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  .card__go {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    width: fit-content;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: var(--brand);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+
+  .card__go :global(svg) {
+    width: 16px;
+    height: 16px;
+    transition: translate 0.25s var(--ease-out);
+  }
+
+  .card:hover .card__go :global(svg) {
+    translate: 4px 0;
+  }
+
+  .card--compact .card__art {
+    padding: 10px 10px 0;
+  }
+
+  .card--compact .card__body {
+    padding: 4px 14px 14px;
+  }
+
+  .card--compact .card__title {
+    font-size: 1rem;
+  }
+</style>

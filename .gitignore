@@ -147,3 +147,11 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# Playwright
+test-results/
+playwright-report/
+
+# Client research notes (private, not for the public repo)
+context.txt
+competitors-research.txt

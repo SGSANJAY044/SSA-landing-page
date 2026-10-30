@@ -1,0 +1,174 @@
+---
+import Icon from '../Icon.astro';
+import { site } from '../../data/site.js';
+import { t } from '../../i18n/ui.js';
+import { waLink } from '../../scripts/whatsapp.js';
+
+const { docs, slug, title, locale } = Astro.props;
+const intro = `${t(locale, 'service.waIntro')} ${title}.`;
+---
+
+<div
+  class="checklist"
+  data-checklist
+  data-slug={slug}
+  data-number={site.whatsapp}
+  data-intro={intro}
+  data-have-label={t(locale, 'service.docsHave')}
+  data-need-label={t(locale, 'service.docsNeed')}
+>
+  <div class="checklist__head">
+    <p class="checklist__hint">{t(locale, 'service.docsHint')}</p>
+    <span class="checklist__count" data-count aria-live="polite">0 / {docs.length}</span>
+  </div>
+  <div class="checklist__meter" data-meter aria-hidden="true"><span></span></div>
+
+  <ul class="checklist__list">
+    {
+      docs.map((doc) => (
+        <li>
+          <label class="item">
+            <input type="checkbox" value={doc} />
+            <span class="item__box" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="m5 12.5 4.5 4.5L19 7.5" />
+              </svg>
+            </span>
+            <span class="item__text">{doc}</span>
+          </label>
+        </li>
+      ))
+    }
+  </ul>
+
+  <a class="btn btn--wa checklist__send" data-send href={waLink(site.whatsapp, intro)} target="_blank" rel="noopener">
+    <Icon name="whatsapp" />
+    {t(locale, 'service.docsSend')}
+  </a>
+</div>
+
+<style>
+  .checklist {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr); /* never wider than the screen */
+    gap: 12px;
+  }
+
+  .checklist__head {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .checklist__hint {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+  }
+
+  .checklist__count {
+    flex: none;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .checklist__meter {
+    height: 6px;
+    border-radius: 6px;
+    background: var(--line);
+    overflow: hidden;
+  }
+
+  .checklist__meter span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--teal));
+    transform-origin: left;
+    transform: scaleX(var(--progress, 0));
+    transition: transform 0.5s var(--ease-out);
+  }
+
+  .checklist__list {
+    display: grid;
+    gap: 8px;
+    margin: 4px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 56px;
+    padding: 10px 14px;
+    border-radius: var(--radius-m);
+    background: var(--surface);
+    box-shadow: inset 0 0 0 1px var(--line);
+    cursor: pointer;
+    transition:
+      background 0.25s,
+      box-shadow 0.25s,
+      transform 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .item:active {
+    transform: scale(0.985);
+  }
+
+  .item input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .item__box {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    flex: none;
+    border-radius: 8px;
+    box-shadow: inset 0 0 0 2px var(--line);
+    transition:
+      background 0.25s,
+      box-shadow 0.25s;
+  }
+
+  .item__box svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 24;
+    stroke-dashoffset: 24;
+    transition: stroke-dashoffset 0.35s var(--ease-out);
+  }
+
+  .item:has(input:checked) {
+    background: var(--teal-soft);
+    box-shadow: none;
+  }
+
+  .item:has(input:checked) .item__box {
+    background: var(--teal);
+    box-shadow: none;
+  }
+
+  .item:has(input:checked) .item__box svg {
+    stroke-dashoffset: 0;
+  }
+
+  .item:has(input:focus-visible) {
+    outline: 3px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  .checklist__send {
+    margin-top: 6px;
+  }
+</style>

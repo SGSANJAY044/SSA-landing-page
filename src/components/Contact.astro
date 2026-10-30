@@ -1,0 +1,135 @@
+---
+import Icon from './Icon.astro';
+import { site } from '../data/site.js';
+import { t, asset } from '../i18n/ui.js';
+import { waLink } from '../scripts/whatsapp.js';
+
+const { locale } = Astro.props;
+---
+
+<section class="contact section" id="contact" aria-labelledby="contact-title">
+  <div class="wrap">
+    <div class="contact__card" data-reveal>
+      <img class="contact__logo" src={asset('/logo.webp')} alt={site.name[locale]} width="480" height="475" loading="lazy" />
+      <p class="eyebrow">{t(locale, 'contact.eyebrow')}</p>
+      <h2 class="section-title" id="contact-title">{t(locale, 'contact.title')}</h2>
+      <p class="section-lead contact__lead">{t(locale, 'contact.lead')}</p>
+
+      <a class="btn btn--wa contact__wa" href={waLink(site.whatsapp, t(locale, 'cta.waGreeting'))} target="_blank" rel="noopener" data-wa-dynamic>
+        <Icon name="whatsapp" />
+        {t(locale, 'cta.whatsappUs')}
+      </a>
+
+      <ul class="contact__list">
+        {
+          site.phones.map((p) => (
+            <li>
+              <a class="contact__row" href={`tel:${p.tel}`}>
+                <span class="contact__icon">
+                  <Icon name="phone" />
+                </span>
+                <span>
+                  <small>{t(locale, 'contact.phone')}</small>
+                  {p.display}
+                </span>
+              </a>
+            </li>
+          ))
+        }
+        <li>
+          <a class="contact__row" href={`mailto:${site.email}`}>
+            <span class="contact__icon">
+              <Icon name="mail" />
+            </span>
+            <span>
+              <small>{t(locale, 'contact.email')}</small>
+              {site.email}
+            </span>
+          </a>
+        </li>
+      </ul>
+      {site.address && <p class="contact__address">{site.address}</p>}
+      {site.hours && <p class="contact__address">{site.hours}</p>}
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact__card {
+    display: grid;
+    justify-items: center;
+    gap: 12px;
+    text-align: center;
+    padding: clamp(28px, 7vw, 56px) clamp(18px, 5vw, 48px);
+    border-radius: var(--radius-l);
+    background:
+      radial-gradient(80% 60% at 50% 0%, var(--gold-soft), transparent 70%),
+      var(--surface);
+    box-shadow: var(--shadow-card);
+  }
+
+  .contact__logo {
+    width: 150px;
+    height: auto;
+    border-radius: var(--radius-m);
+    margin-bottom: 6px;
+  }
+
+  .contact__lead {
+    margin-inline: auto;
+  }
+
+  .contact__wa {
+    width: min(100%, 320px);
+    margin-top: 10px;
+  }
+
+  .contact__list {
+    width: min(100%, 420px);
+    display: grid;
+    gap: 8px;
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+    text-align: left;
+  }
+
+  .contact__row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px;
+    border-radius: var(--radius-m);
+    background: var(--bg);
+    text-decoration: none;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+  }
+
+  .contact__row small {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  .contact__icon {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    flex: none;
+    border-radius: 50%;
+    background: var(--gold-soft);
+    color: var(--text);
+  }
+
+  .contact__icon :global(svg) {
+    width: 18px;
+    height: 18px;
+  }
+
+  .contact__address {
+    color: var(--text-muted);
+  }
+</style>

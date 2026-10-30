@@ -1,0 +1,110 @@
+---
+import '@fontsource/plus-jakarta-sans/400.css';
+import '@fontsource/plus-jakarta-sans/600.css';
+import '@fontsource/plus-jakarta-sans/700.css';
+import '@fontsource/plus-jakarta-sans/800.css';
+import '@fontsource/noto-sans-tamil/400.css';
+import '@fontsource/noto-sans-tamil/600.css';
+import '@fontsource/noto-sans-tamil/700.css';
+import '../styles/global.css';
+
+import Intro from '../components/Intro.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ActionBar from '../components/ActionBar.astro';
+import LeadSheet from '../components/LeadSheet.astro';
+import { site } from '../data/site.js';
+import { locales, localePath, basePath, asset } from '../i18n/ui.js';
+
+const { locale = 'en', title, description, intro = false, backHref, waMessage, page, service } = Astro.props;
+
+const path = basePath(Astro.url.pathname);
+const urlFor = (l) => new URL(localePath(l, path), Astro.site).href;
+const fullTitle = `${title} | ${site.name[locale]}`;
+const ogImage = new URL(asset('/og.png'), Astro.site).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: site.name.en,
+  alternateName: site.name.ta,
+  url: new URL(asset('/'), Astro.site).href,
+  logo: new URL(asset('/logo.jpeg'), Astro.site).href,
+  image: ogImage,
+  telephone: site.phones.map((p) => p.tel),
+  email: site.email,
+  areaServed: { '@type': 'City', name: 'Coimbatore' },
+  ...(site.address && {
+    address: { '@type': 'PostalAddress', streetAddress: site.address, addressLocality: 'Coimbatore', addressRegion: 'TN', addressCountry: 'IN' },
+  }),
+};
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={urlFor(locale)} />
+    {locales.map((l) => <link rel="alternate" hreflang={l === 'ta' ? 'ta-IN' : 'en-IN'} href={urlFor(l)} />)}
+    <link rel="alternate" hreflang="x-default" href={urlFor('en')} />
+    <link rel="icon" href={asset('/favicon.ico')} sizes="48x48" />
+    <link rel="icon" href={asset('/favicon-32.png')} type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href={asset('/apple-touch-icon.png')} />
+    <link rel="manifest" href={asset('/site.webmanifest')} />
+    <meta name="theme-color" content="#faf2e7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0c1813" media="(prefers-color-scheme: dark)" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name[locale]} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={urlFor(locale)} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content={locale === 'ta' ? 'ta_IN' : 'en_IN'} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preload" href={asset('/logo-mark.webp')} as="image" type="image/webp" />
+    {intro && <link rel="preload" href={asset('/logo-wordmark.webp')} as="image" type="image/webp" />}
+
+    <!-- Decide before first paint: JS on, motion allowed, intro due? Failsafe drops the intro after 6s. -->
+    <script is:inline define:vars={{ intro }}>
+      /* global intro -- injected by define:vars */
+      (function () {
+        var d = document.documentElement;
+        d.classList.add('js');
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        d.classList.add('motion');
+        if (!intro) return;
+        try {
+          if (sessionStorage.getItem('ssa-intro-seen')) return;
+        } catch {
+          /* storage blocked — play the intro */
+        }
+        d.classList.add('intro-pending');
+        setTimeout(function () {
+          d.classList.remove('intro-pending');
+        }, 6000);
+      })();
+    </script>
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body data-page={page} data-service={service}>
+    {intro && <Intro locale={locale} />}
+    <Header locale={locale} path={path} backHref={backHref} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer locale={locale} />
+    <ActionBar locale={locale} message={waMessage} />
+    <LeadSheet locale={locale} />
+
+    <script>
+      import { initLeadSheet } from '../scripts/leadsheet.js';
+      initLeadSheet();
+    </script>
+  </body>
+</html>

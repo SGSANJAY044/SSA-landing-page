@@ -1,0 +1,76 @@
+---
+import { site } from '../data/site.js';
+import { t, asset } from '../i18n/ui.js';
+
+const { locale } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__brand">
+      <img src={asset('/logo-mark.webp')} alt="" width="52" height="40" loading="lazy" />
+      <div>
+        <p class="footer__name">{site.name[locale]}</p>
+        <p class="footer__city">{site.city[locale]}</p>
+      </div>
+    </div>
+    <p class="footer__contact">
+      {
+        site.phones.map((p, i) => (
+          <>
+            {i > 0 && ' · '}
+            <a href={`tel:${p.tel}`}>{p.display}</a>
+          </>
+        ))
+      }
+      {' · '}
+      <a href={`mailto:${site.email}`}>{site.email}</a>
+    </p>
+    <p class="footer__note">{t(locale, 'footer.disclaimer')}</p>
+    <p class="footer__note">© {year} {site.name.en}. {t(locale, 'footer.rights')}</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    padding-block: 40px 32px;
+    border-top: 1px solid var(--line);
+    font-size: 0.86rem;
+    color: var(--text-muted);
+  }
+
+  .footer .wrap {
+    display: grid;
+    gap: 14px;
+  }
+
+  .footer__brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .footer__brand img {
+    width: 52px;
+    height: 40px;
+    border-radius: 8px;
+    background: #faf2e7;
+  }
+
+  .footer__name {
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .footer__contact a {
+    color: var(--text);
+    font-weight: 600;
+    text-decoration-color: var(--gold);
+    text-underline-offset: 3px;
+  }
+
+  .footer__note {
+    max-width: 60ch;
+  }
+</style>

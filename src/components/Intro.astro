@@ -1,0 +1,104 @@
+---
+import { site } from '../data/site.js';
+import { t, asset } from '../i18n/ui.js';
+
+const { locale } = Astro.props;
+---
+
+<!-- Always the logo's own cream, whatever the theme — this is the brand moment. -->
+<div class="intro" data-intro aria-hidden="true">
+  <div class="intro__bg" data-intro-bg></div>
+  <div class="intro__stage">
+    <span class="intro__ring" data-intro-ring></span>
+    <span class="intro__ring" data-intro-ring></span>
+    <span class="intro__ring" data-intro-ring></span>
+    <span class="intro__ring" data-intro-ring></span>
+    <img class="intro__logo" data-intro-logo src={asset('/logo-mark.webp')} alt="" width="616" height="475" />
+  </div>
+  <img class="intro__word" data-intro-word src={asset('/logo-wordmark.webp')} alt={site.name[locale]} width="610" height="170" />
+  <button class="intro__skip" type="button" data-intro-skip tabindex="-1">{t(locale, 'intro.skip')}</button>
+</div>
+
+<style>
+  .intro {
+    display: none;
+  }
+
+  :global(html.intro-pending) {
+    overflow: hidden;
+  }
+
+  :global(html.intro-pending) .intro {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 18px;
+  }
+
+  .intro__bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(60% 45% at 50% 42%, #f1e3c3 0%, transparent 70%),
+      #faf2e7;
+  }
+
+  .intro__stage {
+    position: relative;
+    width: min(62vw, 260px);
+    aspect-ratio: 308 / 238;
+    display: grid;
+    place-items: center;
+  }
+
+  .intro__logo {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+
+  /* Sized to clear the emblem's corners (diagonal ≈ 1.27× its width), so waves
+     emerge from the logo's edge and never cross the lettering. */
+  .intro__ring {
+    position: absolute;
+    width: 132%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 2px solid #b8923f;
+    opacity: 0;
+  }
+
+  .intro__ring:nth-child(even) {
+    border-color: #053f29;
+    border-width: 1px;
+    background: radial-gradient(circle, transparent 60%, rgb(5 63 41 / 8%) 100%);
+  }
+
+  /* Sits clear of the first ring; the feathered cream halo lets expanding waves
+     pass behind the lettering instead of through it. */
+  .intro__word {
+    position: relative;
+    z-index: 1;
+    width: min(78vw, 340px);
+    height: auto;
+    margin-top: clamp(40px, 9vw, 64px);
+    padding: 14px 22px;
+    box-sizing: content-box;
+    background: radial-gradient(closest-side, #faf2e7 70%, rgb(250 242 231 / 0%));
+  }
+
+  .intro__skip {
+    position: absolute;
+    bottom: calc(28px + env(safe-area-inset-bottom, 0px));
+    left: 50%;
+    translate: -50% 0;
+    border: 0;
+    background: none;
+    font-size: 0.8rem;
+    color: #4d5c54;
+    opacity: 0.8;
+  }
+</style>

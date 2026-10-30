@@ -1,0 +1,287 @@
+---
+import ServiceCard from './ServiceCard.astro';
+import Icon from './Icon.astro';
+import { publishedServices, groups } from '../data/services.js';
+import { t } from '../i18n/ui.js';
+
+const { locale } = Astro.props;
+const filters = [
+  { id: 'all', label: t(locale, 'services.filterAll') },
+  { id: 'free', label: t(locale, 'services.filterFree') },
+  ...groups.map((g) => ({ id: g, label: t(locale, `groups.${g}`) })),
+];
+---
+
+<section class="services section" id="services" aria-labelledby="services-title">
+  <div class="wrap">
+    <p class="eyebrow">{t(locale, 'services.eyebrow')}</p>
+    <h2 class="section-title" id="services-title">{t(locale, 'services.title')}</h2>
+  </div>
+
+  <div class="carousel" data-carousel aria-roledescription="carousel" aria-labelledby="services-title">
+    <div class="wrap">
+      <div class="filters" role="group" aria-label={t(locale, 'nav.services')}>
+        {
+          filters.map((f, i) => (
+            <button type="button" class="filter" data-filter={f.id} aria-pressed={i === 0 ? 'true' : 'false'}>
+              {f.label}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="embla" data-embla-viewport tabindex="0">
+      <div class="embla__container" data-embla-container>
+        {
+          publishedServices.map((service) => (
+            <div class="embla__slide" role="group" aria-roledescription="slide" data-group={service.group} data-free={String(service.free)}>
+              <ServiceCard service={service} locale={locale} />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- Expanding dots: the active dot becomes a pill that fills while autoplay counts down.
+         Dots are built by carousel.js because their number follows the active filter. -->
+    <div class="wrap controls">
+      <button type="button" class="ctrl ctrl--arrow" data-prev aria-label={t(locale, 'services.prev')}>
+        <Icon name="arrow" />
+      </button>
+      <div class="dots" data-dots role="group" aria-label={t(locale, 'nav.services')} data-dot-label={t(locale, 'services.goTo')}></div>
+      <span class="visually-hidden" data-counter aria-live="polite"></span>
+      <button type="button" class="ctrl ctrl--arrow" data-next aria-label={t(locale, 'services.next')}>
+        <Icon name="arrow" />
+      </button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .services {
+    scroll-margin-top: var(--header-h);
+  }
+
+  .carousel {
+    margin-top: 22px;
+  }
+
+  .filters {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-inline: calc(var(--gutter) * -1);
+    padding: 2px var(--gutter) 18px;
+  }
+
+  .filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter {
+    flex: none;
+    min-height: 40px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--surface);
+    box-shadow: inset 0 0 0 1px var(--line);
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+      background 0.2s,
+      color 0.2s;
+  }
+
+  .filter[aria-pressed='true'] {
+    background: var(--brand);
+    color: #fff;
+    box-shadow: none;
+  }
+
+  .embla {
+    overflow: hidden;
+    padding-block: 8px 16px;
+  }
+
+  .embla:focus-visible {
+    outline-offset: -3px;
+  }
+
+  .embla__container {
+    display: flex;
+    touch-action: pan-y pinch-zoom;
+  }
+
+  .embla__slide {
+    flex: 0 0 78%;
+    min-width: 0;
+    padding-inline: 7px;
+  }
+
+  @media (min-width: 640px) {
+    .embla__slide {
+      flex-basis: 46%;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .embla__slide {
+      flex-basis: 32%;
+    }
+  }
+
+  /* Without JS the strip is a native swipe row */
+  :global(html:not(.js)) .embla {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+
+  :global(html:not(.js)) .embla__slide {
+    scroll-snap-align: center;
+  }
+
+  :global(html:not(.js)) .controls {
+    display: none;
+  }
+
+  /* Active card pops; others recede and pause their illustration loops */
+  .is-ready .embla__slide :global(.card) {
+    transform: scale(0.92);
+    opacity: 0.6;
+    transition:
+      transform 0.5s var(--ease-out),
+      opacity 0.5s var(--ease-out),
+      box-shadow 0.5s var(--ease-out);
+  }
+
+  .is-ready .embla__slide.is-active :global(.card) {
+    transform: none;
+    opacity: 1;
+    box-shadow: var(--shadow-pop);
+  }
+
+  .is-ready .embla__slide:not(.is-active) :global(.il *) {
+    animation-play-state: paused;
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  /* Expanding dots */
+  .dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 0;
+    min-width: 0;
+  }
+
+  .dots :global(.dot) {
+    display: grid;
+    place-items: center;
+    /* 24px hit area around a small visual dot */
+    width: 18px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    transition: width 0.45s var(--ease-out);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .dots :global(.dot__pip) {
+    position: relative;
+    display: block;
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--text) 22%, transparent);
+    overflow: hidden;
+    transition:
+      width 0.45s var(--ease-out),
+      background 0.3s;
+  }
+
+  .dots :global(.dot[aria-current='true']) {
+    width: 40px;
+  }
+
+  .dots :global(.dot[aria-current='true'] .dot__pip) {
+    width: 30px;
+    background: color-mix(in srgb, var(--gold) 30%, transparent);
+  }
+
+  /* Gold fill = time until the next slide; solid when paused */
+  .dots :global(.dot__fill) {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--gold);
+    transform-origin: left;
+    transform: scaleX(0);
+  }
+
+  [data-playing='false'] .dots :global(.dot[aria-current='true'] .dot__fill) {
+    animation: none !important;
+    transform: scaleX(1);
+  }
+
+  .dots :global(.dot:focus-visible) {
+    outline-offset: -2px;
+  }
+
+  .ctrl {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    flex: none;
+    border: 0;
+    border-radius: 50%;
+    background: var(--surface);
+    box-shadow: inset 0 0 0 1px var(--line);
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .ctrl :global(svg) {
+    width: 20px;
+    height: 20px;
+  }
+
+  [data-prev] :global(svg) {
+    rotate: 180deg;
+  }
+
+  /* Arrows are for mouse users; on touch, swiping is the control */
+  .ctrl--arrow {
+    display: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ctrl--arrow {
+      display: grid;
+    }
+  }
+
+  /* Keyframe names are not scoped by Astro; carousel.js references this one. */
+  @keyframes svc-timer {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+</style>

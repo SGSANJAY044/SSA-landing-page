@@ -1,0 +1,333 @@
+---
+import Icon from './Icon.astro';
+import { site } from '../data/site.js';
+import { t } from '../i18n/ui.js';
+import { waLink } from '../scripts/whatsapp.js';
+
+const { locale } = Astro.props;
+const rotator = t(locale, 'hero.rotator');
+---
+
+<section class="hero" data-hero>
+  <div class="hero__layers" aria-hidden="true">
+    <div class="layer layer--sun" data-speed="-0.15"></div>
+    <svg class="layer layer--dots" data-speed="0.12" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <pattern id="kolam" width="28" height="28" patternUnits="userSpaceOnUse">
+          <circle cx="14" cy="14" r="1.6" fill="currentColor"></circle>
+        </pattern>
+      </defs>
+      <rect width="400" height="400" fill="url(#kolam)"></rect>
+    </svg>
+    <svg class="layer layer--contours" data-speed="0.28" viewBox="0 0 400 300" preserveAspectRatio="none">
+      <g fill="none" stroke="currentColor" stroke-width="1.2">
+        <path d="M-10 230 C 60 190, 120 260, 200 220 S 330 170, 410 210"></path>
+        <path d="M-10 250 C 70 215, 130 285, 210 245 S 340 195, 410 235"></path>
+        <path d="M-10 270 C 80 240, 140 305, 220 268 S 350 220, 410 258"></path>
+        <path d="M-10 60 C 50 90, 110 30, 190 64 S 320 110, 410 70"></path>
+      </g>
+    </svg>
+    <div class="float float--doc" data-speed="0.55">
+      <svg viewBox="0 0 48 60"><rect x="2" y="2" width="44" height="56" rx="6" class="f-paper"></rect><rect x="10" y="12" width="22" height="4" rx="2" class="f-gold"></rect><rect x="10" y="22" width="28" height="3" rx="1.5" class="f-soft"></rect><rect x="10" y="30" width="24" height="3" rx="1.5" class="f-soft"></rect><circle cx="34" cy="46" r="6" class="f-gold"></circle></svg>
+    </div>
+    <div class="float float--pin" data-speed="0.8">
+      <svg viewBox="0 0 40 52"><path d="M20 50C8 34 4 27 4 20a16 16 0 0 1 32 0c0 7-4 14-16 30Z" class="f-teal"></path><circle cx="20" cy="20" r="6" class="f-paper"></circle></svg>
+    </div>
+    <div class="float float--seal" data-speed="0.4">
+      <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" class="f-gold"></circle><path d="m15 24 6 6 12-13" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </div>
+  </div>
+
+  <div class="wrap hero__inner">
+    <p class="eyebrow" data-hero-fade>{t(locale, 'hero.eyebrow')}</p>
+    <h1 class="hero__title">
+      <span class="hero__line" data-split>{t(locale, 'hero.line1')}</span>
+      <span class="hero__line hero__line--accent" data-split>{t(locale, 'hero.line2')}</span>
+    </h1>
+
+    <p class="hero__rotator" data-hero-fade aria-hidden="true">
+      {t(locale, 'hero.rotatorPrefix')}
+      <span class="hero__rotator-word"><span data-rotator={JSON.stringify(rotator)}>{rotator[0]}</span></span>?
+    </p>
+    <p class="hero__sub" data-hero-fade>{t(locale, 'hero.sub')}</p>
+
+    <div class="hero__ctas" data-hero-fade data-bar-anchor>
+      <a class="btn btn--wa" href={waLink(site.whatsapp, t(locale, 'cta.waGreeting'))} target="_blank" rel="noopener" data-wa-dynamic>
+        <Icon name="whatsapp" />
+        {t(locale, 'cta.whatsappUs')}
+      </a>
+      <a class="btn btn--ghost" href={`tel:${site.phones[0].tel}`}>
+        <Icon name="phone" />
+        {t(locale, 'cta.callUs')}
+      </a>
+    </div>
+  </div>
+
+  <a class="hero__cue" href="#services" data-hero-fade>
+    <span>{t(locale, 'hero.scroll')}</span>
+    <Icon name="chevron-down" />
+  </a>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    min-height: calc(100svh - var(--header-h));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-block: 32px 24px;
+    overflow: clip;
+  }
+
+  .hero__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr); /* never wider than the screen */
+    gap: 18px;
+  }
+
+  /* Hidden until the reveal script runs; inline-head failsafe class covers no-JS. */
+  :global(html.motion) .hero [data-split],
+  :global(html.motion) .hero [data-hero-fade] {
+    visibility: hidden;
+    animation: hero-failsafe 0s 7s forwards;
+  }
+
+  @keyframes hero-failsafe {
+    to {
+      visibility: visible;
+    }
+  }
+
+  .hero__title {
+    font-size: clamp(2.3rem, 11vw, 4.6rem);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1.02;
+  }
+
+  :global(:lang(ta)) .hero__title {
+    font-size: clamp(1.8rem, 8.4vw, 3.6rem);
+    line-height: 1.25;
+  }
+
+  .hero__line {
+    display: block;
+  }
+
+  .hero__line--accent {
+    background: linear-gradient(100deg, var(--gold-deep), var(--gold) 55%, #e8c463);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    padding-bottom: 0.08em;
+  }
+
+  /* SplitText wraps words in masks; keep the gradient on each word */
+  .hero__line--accent :global(div) {
+    background: inherit;
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  .hero__rotator {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  .hero__rotator-word {
+    display: inline-block;
+    overflow: clip;
+    vertical-align: bottom;
+    padding-inline: 2px;
+  }
+
+  .hero__rotator-word span {
+    display: inline-block;
+    color: var(--text);
+    font-weight: 800;
+    border-bottom: 3px solid var(--gold);
+  }
+
+  .hero__sub {
+    max-width: 36ch;
+    color: var(--text-muted);
+  }
+
+  .hero__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 6px;
+  }
+
+  /* Side-by-side pair: keep labels on one line; the row wraps whole buttons instead */
+  .hero__ctas .btn {
+    flex: 1 1 160px;
+    white-space: nowrap;
+  }
+
+  @media (min-width: 640px) {
+    .hero__ctas .btn {
+      flex: 0 0 auto;
+    }
+  }
+
+  /* In flow (not absolute) so long Tamil copy can never collide with it */
+  .hero__cue {
+    margin: 36px auto 0;
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .hero__cue :global(svg) {
+    width: 22px;
+    height: 22px;
+    animation: cue 1.6s ease-in-out infinite;
+  }
+
+  @keyframes cue {
+    50% {
+      transform: translateY(5px);
+    }
+  }
+
+  /* Parallax layers */
+  .hero__layers {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .layer {
+    position: absolute;
+    will-change: transform;
+  }
+
+  .layer--sun {
+    width: 120vw;
+    max-width: 900px;
+    aspect-ratio: 1;
+    right: -45vw;
+    top: -30%;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--gold-soft) 0%, transparent 65%);
+    opacity: 0.9;
+  }
+
+  .layer--dots {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    color: var(--gold);
+    opacity: 0.18;
+    mask-image: radial-gradient(70% 60% at 70% 30%, #000 0%, transparent 75%);
+  }
+
+  .layer--contours {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 60%;
+    color: var(--gold);
+    opacity: 0.35;
+  }
+
+  .float {
+    position: absolute;
+    opacity: 0.6;
+    filter: drop-shadow(0 10px 18px rgb(5 63 41 / 18%));
+  }
+
+  @media (min-width: 900px) {
+    .float {
+      opacity: 1;
+    }
+  }
+
+  .float :global(svg) {
+    width: 100%;
+    animation: bob 5s ease-in-out infinite;
+  }
+
+  .float--doc {
+    width: 54px;
+    right: 8%;
+    top: 10%;
+    rotate: 10deg;
+  }
+
+  .float--pin {
+    width: 34px;
+    right: 24%;
+    top: 4%;
+  }
+
+  .float--pin :global(svg) {
+    animation-delay: -1.5s;
+  }
+
+  /* Phones: the CTAs fill this corner, so the seal only appears on wide screens */
+  .float--seal {
+    display: none;
+    width: 40px;
+    right: 6%;
+    bottom: 18%;
+  }
+
+  @media (min-width: 900px) {
+    .float--seal {
+      display: block;
+    }
+  }
+
+  .float--seal :global(svg) {
+    animation-delay: -3s;
+  }
+
+  @keyframes bob {
+    50% {
+      transform: translateY(-10px) rotate(-4deg);
+    }
+  }
+
+  .f-paper {
+    fill: var(--il-paper);
+  }
+  .f-gold {
+    fill: var(--gold);
+  }
+  .f-soft {
+    fill: var(--gold-soft);
+  }
+  .f-teal {
+    fill: var(--teal);
+  }
+
+  @media (min-width: 900px) {
+    .float--doc {
+      width: 90px;
+      right: 14%;
+      top: 22%;
+    }
+    .float--pin {
+      width: 56px;
+      right: 30%;
+      top: 12%;
+    }
+    .float--seal {
+      width: 64px;
+      right: 10%;
+      bottom: 24%;
+    }
+  }
+</style>

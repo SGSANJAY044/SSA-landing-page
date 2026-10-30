@@ -1,0 +1,59 @@
+---
+import ServiceCard from '../ServiceCard.astro';
+import { publishedServices } from '../../data/services.js';
+import { t } from '../../i18n/ui.js';
+
+const { current, locale } = Astro.props;
+
+// Start with the services after the current one so "next" is always first.
+const index = publishedServices.findIndex((s) => s.slug === current);
+const others = [...publishedServices.slice(index + 1), ...publishedServices.slice(0, index)];
+---
+
+<section class="more" aria-labelledby="more-title">
+  <div class="wrap">
+    <h2 class="more__title" id="more-title">{t(locale, 'service.more')}</h2>
+  </div>
+  <ul class="more__rail">
+    {
+      others.map((service) => (
+        <li>
+          <ServiceCard service={service} locale={locale} compact />
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .more {
+    padding-block: 24px 48px;
+  }
+
+  .more__title {
+    font-size: 1.25rem;
+    font-weight: 800;
+  }
+
+  .more__rail {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: min(46%, 220px);
+    gap: 12px;
+    margin: 14px 0 0;
+    padding: 6px max(var(--gutter), calc((100% - var(--max)) / 2 + var(--gutter))) 18px;
+    list-style: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: none;
+  }
+
+  .more__rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .more__rail li {
+    scroll-snap-align: start;
+  }
+</style>

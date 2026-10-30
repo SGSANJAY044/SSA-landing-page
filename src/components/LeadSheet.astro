@@ -1,0 +1,407 @@
+---
+/**
+ * Contextual enquiry sheet. Opened by scripts/leadsheet.js when the visitor shows
+ * intent; names the service they engaged with and pre-fills WhatsApp with it.
+ * Copy and the service list are handed to the script via data attributes.
+ */
+import Icon from './Icon.astro';
+import { publishedServices, serviceText } from '../data/services.js';
+import { site } from '../data/site.js';
+import { t, asset } from '../i18n/ui.js';
+
+const { locale } = Astro.props;
+
+const services = publishedServices.map((s) => ({ slug: s.slug, title: serviceText(s, locale).title }));
+const keys = ['title', 'sub', 'titlePick', 'msg', 'msgGeneric', 'msgCallback', 'serviceOther', 'phoneError', 'sending', 'submit', 'thanks'];
+const strings = Object.fromEntries(keys.map((k) => [k, t(locale, `lead.${k}`)]));
+---
+
+<dialog
+  class="lead"
+  data-lead
+  aria-labelledby="lead-title"
+  data-number={site.whatsapp}
+  data-endpoint={site.leadEndpoint ?? ''}
+  data-services={JSON.stringify(services)}
+  data-strings={JSON.stringify(strings)}
+>
+  <div class="lead__inner">
+    <div class="lead__handle" data-lead-drag aria-hidden="true"><span></span></div>
+    <button type="button" class="lead__x" data-lead-close aria-label={t(locale, 'lead.close')}>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+    </button>
+
+    <section class="lead__view" data-view="service">
+      <div class="lead__brand">
+        <img src={asset('/logo-mark.webp')} alt="" width="52" height="40" />
+        <p class="eyebrow">{t(locale, 'lead.eyebrow')}</p>
+      </div>
+      <h2 class="lead__title" id="lead-title" data-lead-title tabindex="-1" autofocus></h2>
+      <p class="lead__sub">{t(locale, 'lead.sub')}</p>
+
+      <div class="lead__ctas">
+        <a class="btn btn--wa" data-lead-wa href="#" target="_blank" rel="noopener">
+          <Icon name="whatsapp" />
+          {t(locale, 'cta.whatsappUs')}
+        </a>
+        <a class="btn btn--ghost" data-lead-call href={`tel:${site.phones[0].tel}`}>
+          <Icon name="phone" />
+          {t(locale, 'cta.callUs')}
+        </a>
+      </div>
+
+      <details class="lead__callback" data-lead-callback>
+        <summary>{t(locale, 'lead.callbackToggle')}</summary>
+        <form class="lead__form" data-lead-form novalidate>
+          <label class="field">
+            <span>{t(locale, 'lead.name')}</span>
+            <input name="name" type="text" autocomplete="name" maxlength="60" />
+          </label>
+          <label class="field">
+            <span>{t(locale, 'lead.phone')}</span>
+            <input name="phone" type="tel" inputmode="tel" autocomplete="tel" required maxlength="16" placeholder="98765 43210" />
+          </label>
+          <p class="field__error" data-lead-error role="alert" hidden></p>
+          <button class="btn btn--ink" type="submit" data-lead-submit>{t(locale, 'lead.submit')}</button>
+          <p class="lead__privacy">{t(locale, 'lead.privacy')}</p>
+        </form>
+        <p class="lead__thanks" data-lead-thanks role="status" hidden></p>
+      </details>
+
+      <button type="button" class="lead__switch" data-lead-switch>
+        {t(locale, 'lead.notThis')}
+        <Icon name="arrow" />
+      </button>
+    </section>
+
+    <section class="lead__view" data-view="pick" hidden>
+      <div class="lead__brand">
+        <img src={asset('/logo-mark.webp')} alt="" width="52" height="40" />
+        <p class="eyebrow">{t(locale, 'lead.eyebrow')}</p>
+      </div>
+      <h2 class="lead__title" id="lead-pick-title" tabindex="-1">{t(locale, 'lead.titlePick')}</h2>
+      <p class="lead__sub">{t(locale, 'lead.subPick')}</p>
+      <div class="lead__chips">
+        {
+          services.map((s) => (
+            <button type="button" class="lead__chip" data-pick={s.slug}>
+              {s.title}
+            </button>
+          ))
+        }
+        <button type="button" class="lead__chip lead__chip--other" data-pick="">{t(locale, 'lead.other')}</button>
+      </div>
+      <button type="button" class="lead__switch lead__switch--back" data-lead-back hidden>
+        <Icon name="arrow" />
+        {t(locale, 'lead.back')}
+      </button>
+    </section>
+  </div>
+</dialog>
+
+<style>
+  .lead {
+    width: 100%;
+    max-width: 520px;
+    max-height: min(88dvh, 720px);
+    margin: auto auto 0;
+    padding: 0;
+    border: 0;
+    border-radius: 26px 26px 0 0;
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: 0 -20px 60px -20px rgb(5 63 41 / 45%);
+    overflow: auto;
+    overscroll-behavior: contain;
+    translate: 0 0;
+    transition:
+      translate 0.45s var(--ease-out),
+      overlay 0.45s allow-discrete,
+      display 0.45s allow-discrete;
+  }
+
+  .lead:not([open]) {
+    translate: 0 105%;
+  }
+
+  @starting-style {
+    .lead[open] {
+      translate: 0 105%;
+    }
+  }
+
+  .lead::backdrop {
+    background: rgb(8 24 17 / 0%);
+    backdrop-filter: blur(0);
+    transition:
+      background 0.35s,
+      backdrop-filter 0.35s,
+      overlay 0.35s allow-discrete,
+      display 0.35s allow-discrete;
+  }
+
+  .lead[open]::backdrop {
+    background: rgb(8 24 17 / 45%);
+    backdrop-filter: blur(3px);
+  }
+
+  @starting-style {
+    .lead[open]::backdrop {
+      background: rgb(8 24 17 / 0%);
+      backdrop-filter: blur(0);
+    }
+  }
+
+  @media (min-width: 700px) {
+    .lead {
+      margin: auto;
+      border-radius: 26px;
+    }
+    .lead:not([open]),
+    .lead[open] {
+      translate: 0 0;
+    }
+    @starting-style {
+      .lead[open] {
+        translate: 0 24px;
+      }
+    }
+  }
+
+  :global(html:has(.lead[open])) {
+    overflow: hidden;
+  }
+
+  .lead__inner {
+    position: relative;
+    padding: 10px clamp(18px, 5vw, 28px) calc(22px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .lead__handle {
+    display: grid;
+    place-items: center;
+    height: 22px;
+    margin: 0 -28px 4px;
+    touch-action: none;
+    cursor: grab;
+  }
+
+  .lead__handle span {
+    width: 42px;
+    height: 5px;
+    border-radius: 5px;
+    background: var(--line);
+  }
+
+  .lead__x {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--bg);
+    cursor: pointer;
+  }
+
+  .lead__x svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+  }
+
+  .lead__view {
+    display: grid;
+    gap: 12px;
+  }
+
+  .lead__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .lead__brand img {
+    width: 52px;
+    height: 40px;
+    border-radius: 8px;
+    background: #faf2e7;
+  }
+
+  .lead__title {
+    font-size: clamp(1.45rem, 6.5vw, 1.9rem);
+    font-weight: 800;
+    padding-right: 36px;
+    color: var(--brand);
+  }
+
+  /* Receives programmatic focus on open (so no button looks pre-selected) */
+  .lead__title:focus {
+    outline: none;
+  }
+
+  :global(:root[data-theme='dark']) .lead__title {
+    color: var(--text);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .lead__title {
+      color: var(--text);
+    }
+  }
+
+  .lead__sub {
+    color: var(--text-muted);
+  }
+
+  .lead__ctas {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .lead__callback {
+    border-radius: var(--radius-m);
+    background: var(--bg);
+  }
+
+  .lead__callback summary {
+    padding: 14px 16px;
+    font-weight: 700;
+    font-size: 0.92rem;
+    cursor: pointer;
+    list-style: none;
+    color: var(--brand);
+  }
+
+  .lead__callback summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .lead__callback summary::after {
+    content: ' ↓';
+  }
+
+  .lead__callback[open] summary::after {
+    content: ' ↑';
+  }
+
+  .lead__form {
+    display: grid;
+    gap: 10px;
+    padding: 0 16px 16px;
+  }
+
+  .field {
+    display: grid;
+    gap: 4px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  .field input {
+    min-height: 48px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--surface);
+    box-shadow: inset 0 0 0 1.5px var(--line);
+    color: var(--text);
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .field input:focus {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--brand);
+  }
+
+  .field__error {
+    color: #b3412b;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .lead__privacy {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .lead__thanks {
+    padding: 0 16px 16px;
+    font-weight: 700;
+    color: var(--teal);
+  }
+
+  .lead__switch {
+    display: inline-flex;
+    align-items: center;
+    justify-self: center;
+    gap: 6px;
+    min-height: 44px;
+    padding: 0 12px;
+    border: 0;
+    background: none;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-color: var(--gold);
+    text-underline-offset: 4px;
+    cursor: pointer;
+  }
+
+  .lead__switch :global(svg) {
+    width: 16px;
+    height: 16px;
+  }
+
+  .lead__switch--back :global(svg) {
+    rotate: 180deg;
+  }
+
+  .lead__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .lead__chip {
+    min-height: 44px;
+    padding: 8px 14px;
+    border: 0;
+    border-radius: 14px;
+    background: var(--bg);
+    box-shadow: inset 0 0 0 1px var(--line);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-align: left;
+    cursor: pointer;
+    transition:
+      background 0.2s,
+      transform 0.15s;
+  }
+
+  .lead__chip:active {
+    transform: scale(0.97);
+  }
+
+  .lead__chip[aria-current='true'] {
+    background: var(--brand-soft);
+    box-shadow: inset 0 0 0 1.5px var(--brand);
+  }
+
+  .lead__chip--other {
+    background: var(--gold-soft);
+    box-shadow: none;
+  }
+</style>

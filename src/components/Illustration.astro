@@ -1,0 +1,12 @@
+---
+/**
+ * Renders the illustration for a service slug, falling back to a generic folder.
+ * Each scene lives in ./illustrations/<slug>.astro and uses the shared `.il` palette.
+ */
+const scenes = import.meta.glob('./illustrations/*.astro', { eager: true });
+
+const { name } = Astro.props;
+const Scene = (scenes[`./illustrations/${name}.astro`] ?? scenes['./illustrations/fallback.astro']).default;
+---
+
+<Scene />

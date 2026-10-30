@@ -1,0 +1,112 @@
+---
+import Icon from './Icon.astro';
+import { site } from '../data/site.js';
+import { t } from '../i18n/ui.js';
+import { waLink } from '../scripts/whatsapp.js';
+
+const { locale, message } = Astro.props;
+const wa = waLink(site.whatsapp, message ?? t(locale, 'cta.waGreeting'));
+---
+
+<nav class="bar" aria-label={t(locale, 'contact.eyebrow')}>
+  <a class="bar__btn bar__btn--call" href={`tel:${site.phones[0].tel}`}>
+    <Icon name="phone" />
+    <span>{t(locale, 'cta.call')}</span>
+  </a>
+  <a class="bar__btn bar__btn--wa" href={wa} target="_blank" rel="noopener" data-wa-dynamic={message ? undefined : ""}>
+    <Icon name="whatsapp" />
+    <span>{t(locale, 'cta.whatsapp')}</span>
+  </a>
+</nav>
+
+<script>
+  // Show the bar only once the page's own Call/WhatsApp buttons have scrolled away.
+  const bar = document.querySelector('.bar');
+  const anchor = document.querySelector('[data-bar-anchor]');
+  if (bar && anchor) {
+    // The sticky header covers the top strip, so buttons sitting under it don't count as visible.
+    const headerHeight = document.querySelector('.header')?.offsetHeight ?? 0;
+    new IntersectionObserver(
+      ([entry]) => {
+        // Anchor visible → tuck; scrolled behind the header or off screen → show.
+        bar.classList.toggle('is-tucked', entry.isIntersecting);
+        bar.classList.add('is-ready');
+      },
+      { rootMargin: `-${headerHeight}px 0px 0px 0px` },
+    ).observe(anchor);
+  } else {
+    bar?.classList.add('is-ready');
+  }
+</script>
+
+<style>
+  .bar {
+    position: fixed;
+    left: 50%;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    translate: -50% 0;
+    z-index: 50;
+    width: min(100% - 24px, 440px);
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 6px;
+    padding: 6px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    backdrop-filter: blur(16px) saturate(1.5);
+    -webkit-backdrop-filter: blur(16px) saturate(1.5);
+    box-shadow:
+      var(--shadow-pop),
+      inset 0 0 0 1px var(--line);
+    view-transition-name: action-bar;
+    transition:
+      translate 0.45s var(--ease-out),
+      opacity 0.3s var(--ease-out),
+      visibility 0s linear 0s;
+  }
+
+  /* Tucked away while the page's own Call/WhatsApp buttons ([data-bar-anchor]) are
+     on screen. Hidden from first paint on pages that have an anchor, so it never
+     flashes; without JS it always shows. */
+  .bar.is-tucked,
+  :global(html.js body[data-page='home']) .bar:not(.is-ready) {
+    translate: -50% calc(100% + 24px + env(safe-area-inset-bottom, 0px));
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      translate 0.35s var(--ease-out),
+      opacity 0.25s var(--ease-out),
+      visibility 0s linear 0.35s;
+  }
+
+  .bar__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 48px;
+    border-radius: 999px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.2s var(--ease-out);
+  }
+
+  .bar__btn:active {
+    transform: scale(0.96);
+  }
+
+  .bar__btn :global(svg) {
+    width: 20px;
+    height: 20px;
+  }
+
+  .bar__btn--call {
+    color: var(--text);
+  }
+
+  .bar__btn--wa {
+    background: var(--whatsapp);
+    color: #fff;
+  }
+</style>

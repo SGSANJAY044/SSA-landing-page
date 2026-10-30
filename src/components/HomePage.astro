@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from './Hero.astro';
+import ServiceCarousel from './ServiceCarousel.astro';
+import OnlineRegChecker from './OnlineRegChecker.astro';
+import HowItWorks from './HowItWorks.astro';
+import Contact from './Contact.astro';
+import { t } from '../i18n/ui.js';
+
+const { locale } = Astro.props;
+---
+
+<Base locale={locale} title={t(locale, 'meta.homeTitle')} description={t(locale, "meta.homeDescription")} intro page="home">
+  <Hero locale={locale} />
+  <ServiceCarousel locale={locale} />
+  <OnlineRegChecker locale={locale} />
+  <HowItWorks locale={locale} />
+  <Contact locale={locale} />
+</Base>
+
+<script>
+  import '../scripts/home.js';
+</script>

@@ -1,0 +1,36 @@
+---
+import Stepper from './Stepper.astro';
+import { t } from '../i18n/ui.js';
+
+const { locale } = Astro.props;
+const steps = [1, 2, 3].map((n) => ({ title: t(locale, `how.s${n}.title`), body: t(locale, `how.s${n}.body`) }));
+---
+
+<section class="how section" aria-labelledby="how-title">
+  <div class="wrap how__grid">
+    <div data-reveal>
+      <p class="eyebrow">{t(locale, 'how.eyebrow')}</p>
+      <h2 class="section-title" id="how-title">{t(locale, 'how.title')}</h2>
+    </div>
+    <Stepper steps={steps} />
+  </div>
+</section>
+
+<style>
+  .how {
+    padding-top: 0;
+  }
+
+  .how__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+
+  @media (min-width: 900px) {
+    .how__grid {
+      grid-template-columns: 1fr 1.2fr;
+      gap: 64px;
+    }
+  }
+</style>
