@@ -41,7 +41,7 @@ const jsonLd = {
 ---
 
 <!doctype html>
-<html lang={locale}>
+<html lang={locale} data-theme="light">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -54,8 +54,7 @@ const jsonLd = {
     <link rel="icon" href={asset('/favicon-32.png')} type="image/png" sizes="32x32" />
     <link rel="apple-touch-icon" href={asset('/apple-touch-icon.png')} />
     <link rel="manifest" href={asset('/site.webmanifest')} />
-    <meta name="theme-color" content="#faf2e7" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0c1813" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#faf2e7" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={site.name[locale]} />
@@ -75,6 +74,15 @@ const jsonLd = {
       (function () {
         var d = document.documentElement;
         d.classList.add('js');
+        try {
+          // Light by default; the header switch stores 'dark' when chosen.
+          if (localStorage.getItem('ssa-theme') === 'dark') {
+            d.dataset.theme = 'dark';
+            document.querySelector('meta[name="theme-color"]').content = '#0c1813';
+          }
+        } catch {
+          /* storage blocked — stay light */
+        }
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         d.classList.add('motion');
         if (!intro) return;

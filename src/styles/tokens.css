@@ -46,28 +46,7 @@
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    color-scheme: dark;
-    --brand: #2f8a5f;
-    --brand-soft: #173326;
-    --bg: #0c1813;
-    --surface: #14241c;
-    --text: #f3ecdf;
-    --text-muted: #b5c2b9;
-    --line: #26392f;
-    --gold: #d6b468;
-    --gold-soft: #3a3120;
-    --teal: #5cc495;
-    --teal-soft: #173326;
-    --il-ink: #e9e2d2;
-    --il-paper: #1f3329;
-    --il-bg: #182a21;
-    --il-gold-soft: #4a3f27;
-    --shadow-card: 0 1px 2px rgb(0 0 0 / 30%), 0 12px 32px -12px rgb(0 0 0 / 60%);
-  }
-}
-
+/* Dark palette — only when the visitor picks it with the header switch; light is the default. */
 :root[data-theme='dark'] {
   color-scheme: dark;
   --brand: #2f8a5f;

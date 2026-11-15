@@ -24,11 +24,40 @@ const other = otherLocale(locale);
         <span class="header__name-sub">{site.nameLines[locale][1]}</span>
       </span>
     </a>
+    <button class="header__theme" type="button" data-theme-toggle aria-pressed="false" aria-label={t(locale, 'nav.themeDark')}>
+      <svg class="header__theme-sun" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.2" />
+        <path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" />
+      </svg>
+      <svg class="header__theme-moon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" />
+      </svg>
+    </button>
     <a class="header__lang" href={localePath(other, path)} hreflang={other} lang={other} aria-label={t(locale, 'nav.switchLabel')}>
       {t(locale, 'nav.switchTo')}
     </a>
   </div>
 </header>
+
+<script>
+  // Light/dark switch. The stored choice is applied before first paint in Base.astro.
+  const root = document.documentElement;
+  const meta = document.querySelector('meta[name="theme-color"]');
+  const toggle = document.querySelector('[data-theme-toggle]');
+  const sync = () => toggle?.setAttribute('aria-pressed', String(root.dataset.theme === 'dark'));
+  sync();
+  toggle?.addEventListener('click', () => {
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    if (meta) meta.content = next === 'dark' ? '#0c1813' : '#faf2e7';
+    try {
+      localStorage.setItem('ssa-theme', next);
+    } catch {
+      /* storage blocked — the choice lasts for this page only */
+    }
+    sync();
+  });
+</script>
 
 <style>
   .header {
@@ -80,12 +109,6 @@ const other = otherLocale(locale);
     color: var(--text);
   }
 
-  @media (prefers-color-scheme: dark) {
-    :global(:root:not([data-theme='light'])) .header__brand {
-      color: var(--text);
-    }
-  }
-
   .header__brand img {
     width: 47px;
     height: 36px;
@@ -111,7 +134,6 @@ const other = otherLocale(locale);
     text-wrap: balance;
   }
 
-
   .header__name-sub {
     font-size: clamp(0.58rem, 2.5vw, 0.68rem);
     font-weight: 700;
@@ -136,14 +158,50 @@ const other = otherLocale(locale);
     color: var(--gold);
   }
 
-  @media (prefers-color-scheme: dark) {
-    :global(:root:not([data-theme='light'])) .header__name-sub {
-      color: var(--gold);
-    }
+  .header__theme {
+    margin-left: auto;
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: var(--surface);
+    box-shadow: inset 0 0 0 1px var(--line);
+    color: var(--text);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .header__theme svg {
+    grid-area: 1 / 1;
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition:
+      transform 0.4s var(--ease-out),
+      opacity 0.25s;
+  }
+
+  /* Shows the mode you'd switch to: moon in light, sun in dark. */
+  .header__theme-sun,
+  :global(:root[data-theme='dark']) .header__theme-moon {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.5);
+  }
+
+  :global(:root[data-theme='dark']) .header__theme-sun {
+    opacity: 1;
+    transform: none;
   }
 
   .header__lang {
-    margin-left: auto;
     flex: none;
     padding: 8px 12px;
     border-radius: 999px;
@@ -152,5 +210,27 @@ const other = otherLocale(locale);
     text-decoration: none;
     background: var(--surface);
     box-shadow: inset 0 0 0 1px var(--line);
+  }
+
+  /* Smallest phones (320px) with the back button: tighten so the name keeps clear of the switches */
+  @media (max-width: 359px) {
+    .header__inner,
+    .header__brand {
+      gap: 7px;
+    }
+
+    .header__brand img {
+      width: 40px;
+      height: 31px;
+    }
+
+    .header__theme {
+      width: 32px;
+      height: 32px;
+    }
+
+    .header__lang {
+      padding: 6px 10px;
+    }
   }
 </style>

@@ -250,12 +250,6 @@ const strings = Object.fromEntries(keys.map((k) => [k, t(locale, `lead.${k}`)]))
     color: var(--text);
   }
 
-  @media (prefers-color-scheme: dark) {
-    :global(:root:not([data-theme='light'])) .lead__title {
-      color: var(--text);
-    }
-  }
-
   .lead__sub {
     color: var(--text-muted);
   }

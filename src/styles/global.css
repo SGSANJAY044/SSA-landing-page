@@ -110,12 +110,6 @@ p {
   color: var(--gold);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) .eyebrow {
-    color: var(--gold);
-  }
-}
-
 .section-title {
   font-size: clamp(1.7rem, 6.5vw, 2.6rem);
   font-weight: 800;
