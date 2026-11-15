@@ -36,6 +36,14 @@ const { name } = Astro.props;
   )
 }
 {
+  name === 'pin' && (
+    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M12 22s7-6.1 7-12a7 7 0 0 0-14 0c0 5.9 7 12 7 12Z" />
+      <circle cx="12" cy="10" r="2.6" fill="none" stroke="currentColor" stroke-width="2" />
+    </svg>
+  )
+}
+{
   name === 'arrow' && (
     <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
       <path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6" />

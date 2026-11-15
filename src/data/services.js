@@ -714,8 +714,9 @@ export const services = [
           'Wedding invitation and a wedding photo',
           'Age proof of bride and groom',
           'Address proof of bride and groom',
+          'Aadhaar of bride and groom',
+          'Aadhaar of witnesses',
           'Passport-size photos',
-          'ID proof of witnesses',
         ],
         faqs: [
           { q: 'Why register a marriage?', a: 'The certificate is needed for passports, spouse visas, insurance and bank nominations.' },
@@ -736,7 +737,7 @@ export const services = [
           'ஆன்லைனில் நேரம் முன்பதிவு செய்கிறோம்.',
           'நீங்கள், உங்கள் துணை, சாட்சிகள் ஒருமுறை வருகை — சான்றிதழ் வழங்கப்படும்.',
         ],
-        docs: ['திருமண அழைப்பிதழ், திருமணப் புகைப்படம்', 'மணமக்களின் வயதுச் சான்று', 'மணமக்களின் முகவரிச் சான்று', 'பாஸ்போர்ட் அளவு புகைப்படங்கள்', 'சாட்சிகளின் அடையாளச் சான்று'],
+        docs: ['திருமண அழைப்பிதழ், திருமணப் புகைப்படம்', 'மணமக்களின் வயதுச் சான்று', 'மணமக்களின் முகவரிச் சான்று', 'மணமக்களின் ஆதார் அட்டை', 'சாட்சிகளின் ஆதார் அட்டை', 'பாஸ்போர்ட் அளவு புகைப்படங்கள்'],
         faqs: [
           { q: 'திருமணத்தை ஏன் பதிவு செய்ய வேண்டும்?', a: 'பாஸ்போர்ட், துணை விசா, காப்பீடு, வங்கி நியமனங்களுக்குச் சான்றிதழ் தேவை.' },
           {
