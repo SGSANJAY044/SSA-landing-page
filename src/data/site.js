@@ -26,7 +26,7 @@ export const site = {
   email: 'sriswarnabairava@gmail.com',
   // Matches the Google Business Profile listing.
   address: {
-    lines: ['D.R. City Centre, 48, Kamarajar Road', 'Opp. Singanallur Bus Stand, TNHB Housing Unit', 'Singanallur, Coimbatore, Tamil Nadu 641005'],
+    lines: ['D.R. City Centre, 48, Kamarajar Road', 'Opp. Singanallur Bus Stand', 'Singanallur, Coimbatore, Tamil Nadu 641005'],
     street: 'D.R. City Centre, 48, Kamarajar Road, Opp. Singanallur Bus Stand, Singanallur',
     locality: 'Coimbatore',
     region: 'Tamil Nadu',
