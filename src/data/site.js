@@ -2,8 +2,8 @@
  * Business facts. Anything marked TODO(client) is unconfirmed — leave it null
  * and the UI simply omits it rather than showing a guess.
  */
-// Search by street address: a name search lands on a similarly named temple nearby.
-const MAP_QUERY = encodeURIComponent('D.R. City Centre, 48, Kamarajar Road, Singanallur, Coimbatore, Tamil Nadu 641005');
+// Exact pin of the Google Business Profile listing (from the client's share link).
+const MAP_PIN = '11.0018212,77.0284481';
 
 export const site = {
   name: {
@@ -41,7 +41,8 @@ export const site = {
   leadEndpoint: null,
   // TODO(client): opening hours, GBP review link.
   hours: null,
-  mapEmbedUrl: `https://maps.google.com/maps?q=${MAP_QUERY}&z=16&output=embed`,
-  mapsUrl: `https://www.google.com/maps/search/?api=1&query=${MAP_QUERY}`,
+  mapEmbedUrl: `https://maps.google.com/maps?q=${MAP_PIN}&z=17&output=embed`,
+  // Opens the business listing itself (reviews, hours, directions).
+  mapsUrl: 'https://maps.app.goo.gl/GNp9NBiWph69gUTj8',
   reviewsUrl: null,
 };
